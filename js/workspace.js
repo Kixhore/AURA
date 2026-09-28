@@ -192,6 +192,9 @@ function openModel(modelId){
   if (!model) return;
   selectedModel = model;
   AuraEngine.setLibraryModel(model.id);
+  const hoodToggle = document.getElementById('bmw-hood-toggle');
+  hoodToggle.hidden = model.id !== 'bmw-m4';
+  hoodToggle.textContent = 'Open hood';
   document.getElementById('view-viewer').dataset.modelId = model.id;
   modelViewCount += 1;
   document.getElementById('viewer-model-name').textContent = model.name;
@@ -215,6 +218,10 @@ document.querySelectorAll('[data-go]').forEach(button=>button.addEventListener('
 document.getElementById('toolbar-profile').addEventListener('click', ()=>switchWorkspaceView('profile'));
 document.getElementById('workspace-signout').addEventListener('click', signOut);
 document.getElementById('viewer-controls-toggle').addEventListener('click', ()=>AuraEngine.setDrawer(!drawer.classList.contains('open')));
+document.getElementById('bmw-hood-toggle').addEventListener('click', event=>{
+  const open = AuraEngine.toggleVehicleHood();
+  event.currentTarget.textContent = open ? 'Close hood' : 'Open hood';
+});
 [document.getElementById('dashboard-models'),document.getElementById('library-grid')].forEach(grid=>grid.addEventListener('click', event=>{
   const openButton = event.target.closest('[data-open-model]');
   const favoriteButton = event.target.closest('[data-favorite-model]');
