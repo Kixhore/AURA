@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>AURA — Interactive Engine Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="canvas-container"></div>
+<div id="vignette"></div>
+<div id="scanline"></div>
+
+<div id="topbar">
+  <button id="drawer-toggle" aria-label="Open workspace controls">☰</button>
+  <div id="brand">
+    <div id="brand-mark"><span>A</span></div>
+    <div id="topbar-title">
+      <h1>AURA ENGINE LAB</h1>
+      <p>INTERACTIVE ENGINEERING, IN THREE DIMENSIONS</p>
+    </div>
+  </div>
+  <div id="session-area"><span id="session-label">DEMO ACCESS</span><button id="auth-action" type="button">Sign in</button></div>
+</div>
+
+<div id="hint-corner">Drag to orbit · Pinch/scroll to zoom<br>Tap a part to isolate it</div>
+
+<main id="landing-screen">
+  <section id="landing-content" aria-labelledby="landing-title">
+    <p class="eyebrow">A hands-on engine intelligence lab</p>
+    <h2 id="landing-title">See how the<br><em>machine thinks.</em></h2>
+    <p id="landing-copy">Explore a twin-turbo six-cylinder engine from the inside out. Isolate components, reveal the cutaway, and watch the firing sequence in real time.</p>
+    <div id="landing-actions">
+      <button class="landing-cta" id="launch-demo" type="button">Enter live demo <span aria-hidden="true">↗</span></button>
+      <button id="landing-login" type="button">Demo sign in</button>
+    </div>
+    <div id="landing-stats" aria-label="Engine specifications">
+      <div class="landing-stat"><strong>3D</strong><span>Interactive model</span></div>
+      <div class="landing-stat"><strong>6 cyl</strong><span>Firing simulation</span></div>
+      <div class="landing-stat"><strong>360°</strong><span>Component inspection</span></div>
+    </div>
+  </section>
+</main>
+<div id="landing-index" aria-hidden="true">01 / ENGINE SYSTEMS</div>
+
+<dialog id="login-dialog" aria-labelledby="login-title">
+  <form class="login-inner" id="demo-login-form">
+    <div class="login-head">
+      <div><h2 id="login-title">Welcome to AURA</h2><p>Use the demo profile to open the engineering workspace.</p></div>
+      <button id="login-close" type="button" aria-label="Close sign-in">×</button>
+    </div>
+    <div id="demo-account">Demo profile ready · no account or password is sent to a server.</div>
+    <label class="login-label" for="demo-role">Choose a demo role</label>
+    <select class="login-input" id="demo-role" required>
+      <option value="student">Student dashboard</option>
+      <option value="mentor">Mentor dashboard</option>
+      <option value="admin">Admin dashboard</option>
+    </select>
+    <label class="login-label" for="demo-email">Email</label>
+    <input class="login-input" id="demo-email" type="email" value="engineer@aura.demo" autocomplete="username" readonly>
+    <label class="login-label" for="demo-password">Access key</label>
+    <input class="login-input" id="demo-password" type="password" value="aura-demo-access" autocomplete="current-password" readonly>
+    <button id="demo-submit" type="submit">Continue as demo engineer</button>
+    <p id="login-note">Role dashboards are demo views only. No real authentication or permissions are applied.</p>
+  </form>
+</dialog>
+
+<div id="drawer-backdrop"></div>
+<div id="feature-drawer">
+  <button id="feature-drawer-close" type="button" aria-label="Close model controls">×</button>
+
+  <div class="section">
+    <p class="section-title">Voice Control <button id="ai-voice-toggle">AI Voice: Off</button></p>
+    <div id="wave"></div>
+    <div id="voice-text">"Show me the power flow"</div>
+    <div id="voice-row">
+      <button id="mic-btn">🎙</button>
+      <div id="voice-status">Checking mic support…</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-title">Model Assistant <span class="chat-ready">MODEL READY</span></p>
+    <div id="chat-messages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="chat-message assistant"><span class="chat-speaker">AURA</span><p>Ask me about the engine or any listed part. I can explain its material and function, focus it in the viewer, or run a model control.</p></div>
+    </div>
+    <form id="cmd-form" autocomplete="off">
+      <div id="cmd-input-wrap">
+        <div id="mic-dot" aria-hidden="true"></div>
+        <input id="cmd-input" type="text" placeholder="Ask about a model or part…" aria-label="Ask the model assistant">
+        <button id="cmd-send" type="submit" aria-label="Send message" title="Send message">↑</button>
+      </div>
+    </form>
+    <p id="cmd-hint">Try “what does the oil pan do?” or “focus turbo”</p>
+  </div>
+
+  <div class="section">
+    <p class="section-title">Model Controls</p>
+    <p class="r-desc">Separates every component along its natural axis.</p>
+    <button class="r-btn" id="btn-explode">Toggle Exploded View</button>
+    <p class="r-desc">Cuts away the block to reveal the crankshaft, pistons &amp; rods.</p>
+    <button class="r-btn" id="btn-cross">Toggle Cross Section</button>
+    <p class="r-desc">Runs the crank &amp; pistons through a live firing cycle.</p>
+    <button class="r-btn run" id="btn-sim">Start Engine</button>
+  </div>
+
+</div>
+
+<div id="info-float">
+  <p class="info-name" id="info-name">Engine Block</p>
+  <p class="info-fn" id="info-fn">Houses cylinders, crankshaft &amp; oil galleries</p>
+</div>
+
+<div id="parts-strip-wrap">
+  <p id="parts-strip-label">Parts — tap to isolate</p>
+  <div id="parts-strip"></div>
+</div>
+
+<div id="workspace-shell" aria-label="AURA engineering workspace">
+  <aside id="workspace-sidebar">
+    <div class="sidebar-brand"><span class="brand-glyph">A</span><div><strong>AURA</strong><small>ENGINEERING LAB</small></div></div>
+    <p class="sidebar-label">Workspace</p>
+    <nav id="workspace-nav" aria-label="Workspace pages">
+      <button class="nav-link" data-view="dashboard" aria-current="page"><span class="nav-icon">▦</span><span>Dashboard</span></button>
+      <button class="nav-link" data-view="library"><span class="nav-icon">◫</span><span>Library</span></button>
+      <button class="nav-link" data-view="upload"><span class="nav-icon">↑</span><span>Upload</span></button>
+      <button class="nav-link" data-view="viewer"><span class="nav-icon">◇</span><span>3D Viewer</span></button>
+      <button class="nav-link" data-view="profile"><span class="nav-icon">⚙</span><span>Profile</span></button>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user"><span class="user-avatar" id="sidebar-avatar">E</span><div><strong id="sidebar-name">Engineering Student</strong><small id="sidebar-role">Student · Demo</small></div><button id="workspace-signout" type="button">⇥ &nbsp; Sign out</button></div>
+  </aside>
+
+  <header id="workspace-toolbar">
+    <label id="toolbar-search"><span aria-hidden="true">⌕</span><input id="workspace-search" type="search" placeholder="Search models and components" aria-label="Search models and components"></label>
+    <div id="toolbar-actions"><span id="toolbar-view-name">Engineering workspace</span><button id="toolbar-profile" type="button" aria-label="Open profile">E</button></div>
+  </header>
+
+  <main id="workspace-main">
+    <section class="workspace-page active" id="view-dashboard" data-page="dashboard">
+      <div class="welcome-banner">
+        <div><p class="greeting" id="dashboard-role-label">✦ &nbsp; Student workspace</p><h2 id="dashboard-greeting">Engineering Student</h2><p id="dashboard-intro">Continue your engineering learning journey.</p></div>
+        <button class="primary-action" id="dashboard-primary-action" type="button" data-go="upload"><span aria-hidden="true">↑</span> Upload model</button>
+      </div>
+      <div class="stats-grid" aria-label="Workspace statistics">
+        <article class="stat-card"><span class="stat-mark">◇</span><strong id="stat-models">3</strong><span id="stat-models-label">My models</span></article>
+        <article class="stat-card"><span class="stat-mark">◉</span><strong id="stat-views">4</strong><span id="stat-views-label">Total views</span></article>
+        <article class="stat-card"><span class="stat-mark">↗</span><strong id="stat-progress">0%</strong><span id="stat-progress-label">Learning progress</span></article>
+        <article class="stat-card"><span class="stat-mark">☆</span><strong id="stat-favorites">0</strong><span id="stat-favorites-label">Favorites</span></article>
+      </div>
+      <div class="dashboard-columns role-dashboard" data-dashboard-role="student">
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Recent models</h2><button class="text-action" type="button" data-go="library">View library &nbsp; ↗</button></div>
+          <div class="model-grid" id="dashboard-models"></div>
+        </section>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Quick start</h2></div>
+          <div class="quick-list">
+            <button class="quick-row" type="button" data-go="viewer"><span class="quick-symbol">◇</span><span><strong>Explore the engine</strong><span>Orbit, inspect parts, and run the cycle</span></span></button>
+            <button class="quick-row" type="button" data-go="library"><span class="quick-symbol">◫</span><span><strong>Browse starter models</strong><span>Open a model or component preset</span></span></button>
+            <button class="quick-row" type="button" data-go="upload"><span class="quick-symbol">↑</span><span><strong>Add a model</strong><span>Keep a file in this browser session</span></span></button>
+          </div>
+        </section>
+      </div>
+      <div class="dashboard-columns role-dashboard" data-dashboard-role="mentor" hidden>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Reviews waiting</h2><button class="text-action" type="button" data-go="library">Open model library &nbsp; ↗</button></div>
+          <div class="role-work-list">
+            <article class="role-work-item"><span class="role-avatar">JL</span><div><strong>Engine airflow analysis</strong><small>Jordan Lee · Twin Turbo Inline-6</small></div><span class="role-status review">Review</span></article>
+            <article class="role-work-item"><span class="role-avatar">AM</span><div><strong>Turbocharger component study</strong><small>Alex Morgan · Component preset</small></div><span class="role-status review">Review</span></article>
+            <article class="role-work-item"><span class="role-avatar">SK</span><div><strong>Crankshaft motion exercise</strong><small>Sam Kim · Engine assembly</small></div><span class="role-status due">Due today</span></article>
+          </div>
+        </section>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>My students</h2><span class="role-demo-tag">3 SAMPLE</span></div>
+          <div class="role-directory-list">
+            <article class="role-work-item"><span class="role-avatar">JL</span><div><strong>Jordan Lee</strong><small>Engine systems · Year 2</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar">AM</span><div><strong>Alex Morgan</strong><small>Materials · Year 1</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar">SK</span><div><strong>Sam Kim</strong><small>Mechanical motion · Year 3</small></div><span class="role-status due">At risk</span></article>
+          </div>
+          <button class="quiet-action role-action" type="button" data-go="profile">Open mentor profile</button>
+        </section>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Learner progress</h2><span class="role-demo-tag">SAMPLE DATA</span></div>
+          <div class="learner-progress"><div><span><strong>Jordan Lee</strong><small>Engine systems</small></span><b>82%</b></div><progress value="82" max="100"></progress></div>
+          <div class="learner-progress"><div><span><strong>Alex Morgan</strong><small>Materials and components</small></span><b>64%</b></div><progress value="64" max="100"></progress></div>
+          <div class="learner-progress"><div><span><strong>Sam Kim</strong><small>Mechanical motion</small></span><b>41%</b></div><progress value="41" max="100"></progress></div>
+        </section>
+      </div>
+      <div class="dashboard-columns role-dashboard" data-dashboard-role="admin" hidden>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Platform overview</h2><span class="role-demo-tag">SAMPLE DATA</span></div>
+          <div class="admin-health-list"><div><span class="health-dot"></span><span><strong>Model services</strong><small>All systems operational</small></span><b>Healthy</b></div><div><span class="health-dot"></span><span><strong>Authentication</strong><small>Demo sign-in environment</small></span><b>Healthy</b></div><div><span class="health-dot warning"></span><span><strong>Model review queue</strong><small>7 items need moderation</small></span><b class="health-warning">Attention</b></div></div>
+          <button class="quiet-action role-action" type="button" data-go="library">Review model library</button>
+        </section>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Recent activity</h2><span class="role-demo-tag">SAMPLE DATA</span></div>
+          <div class="role-work-list"><article class="role-work-item"><span class="role-avatar admin-avatar">UP</span><div><strong>New model submitted</strong><small>Student workspace · 14 minutes ago</small></div></article><article class="role-work-item"><span class="role-avatar admin-avatar">MN</span><div><strong>Mentor review completed</strong><small>Engineering cohort · 1 hour ago</small></div></article><article class="role-work-item"><span class="role-avatar admin-avatar">DB</span><div><strong>Demo library refreshed</strong><small>System · Today</small></div></article></div>
+        </section>
+      </div>
+      <div class="dashboard-columns role-dashboard admin-directories" data-dashboard-role="admin" hidden>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Students</h2><span class="role-demo-tag">3 SAMPLE</span></div>
+          <div class="role-directory-list">
+            <article class="role-work-item"><span class="role-avatar">JL</span><div><strong>Jordan Lee</strong><small>Student · Joined Sep 18</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar">AM</span><div><strong>Alex Morgan</strong><small>Student · Joined Sep 12</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar">SK</span><div><strong>Sam Kim</strong><small>Student · Joined Aug 29</small></div><span class="role-status due">Review</span></article>
+          </div>
+        </section>
+        <section class="content-panel">
+          <div class="panel-heading"><h2>Mentors</h2><span class="role-demo-tag">3 SAMPLE</span></div>
+          <div class="role-directory-list">
+            <article class="role-work-item"><span class="role-avatar admin-avatar">TB</span><div><strong>Taylor Brooks</strong><small>Mechanical systems · 12 learners</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar admin-avatar">RP</span><div><strong>Riley Patel</strong><small>Materials engineering · 9 learners</small></div><span class="role-status">Active</span></article>
+            <article class="role-work-item"><span class="role-avatar admin-avatar">MC</span><div><strong>Morgan Chen</strong><small>Design review · 7 learners</small></div><span class="role-status">Active</span></article>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="workspace-page" id="view-library" data-page="library">
+      <div class="page-heading"><div><h1>Model library</h1><p>Open the included engine demo or jump to a component view.</p></div><button class="primary-action" type="button" data-go="upload">↑ &nbsp; Upload model</button></div>
+      <div class="library-toolbar"><div class="filter-row" role="group" aria-label="Filter model library">
+        <button class="filter-chip" type="button" data-filter="all" aria-pressed="true">All models</button>
+        <button class="filter-chip" type="button" data-filter="assembly" aria-pressed="false">Assemblies</button>
+        <button class="filter-chip" type="button" data-filter="component" aria-pressed="false">Components</button>
+        <button class="filter-chip" type="button" data-filter="favorites" aria-pressed="false">Favorites</button>
+      </div><span id="library-count" class="profile-note"></span></div>
+      <div class="model-grid" id="library-grid"></div>
+    </section>
+
+    <section class="workspace-page" id="view-upload" data-page="upload">
+      <div class="page-heading"><div><h1>Upload a model</h1><p>Add a 3D model to your current browser session.</p></div></div>
+      <div class="upload-layout">
+        <section class="content-panel">
+          <div id="upload-dropzone" role="button" tabindex="0" aria-label="Choose or drop 3D model files">
+            <span class="upload-icon">↑</span><strong>Drop model files here</strong><p>or choose from your device · GLB, GLTF, OBJ, STL · max 50 MB each</p>
+            <button class="primary-action" id="choose-models" type="button">Choose files</button>
+            <input id="model-file-input" type="file" accept=".glb,.gltf,.obj,.stl,model/gltf-binary,model/gltf+json" multiple>
+          </div>
+          <p id="upload-feedback" role="status">Files remain local to this browser session.</p>
+          <div id="upload-list" aria-live="polite"></div>
+        </section>
+        <aside class="content-panel"><div class="panel-heading"><h2>Model formats</h2></div>
+          <div class="quick-list"><div class="quick-row"><span class="quick-symbol">3D</span><span><strong>GLB / GLTF</strong><span>Recommended for materials and textures.</span></span></div><div class="quick-row"><span class="quick-symbol">OBJ</span><span><strong>OBJ</strong><span>Geometry with optional companion materials.</span></span></div><div class="quick-row"><span class="quick-symbol">STL</span><span><strong>STL</strong><span>Mesh geometry for engineering parts.</span></span></div></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="workspace-page viewer-page" id="view-viewer" data-page="viewer">
+      <div id="viewer-heading"><div><h1 id="viewer-model-name">Twin Turbo Inline-6</h1><p id="viewer-model-description">Interactive sample model · select any part to isolate it</p></div><div class="viewer-actions"><button id="share-model-button" type="button">▦ &nbsp; Share to phone</button><button id="ar-model-button" type="button">⌖ &nbsp; View in AR</button><button id="viewer-controls-toggle" type="button">Model controls &nbsp; ☰</button></div></div>
+      <p id="ar-session-status" role="status" hidden></p>
+    </section>
+
+    <section class="workspace-page" id="view-profile" data-page="profile">
+      <div class="page-heading"><div><h1>Your profile</h1><p>Manage your local demo identity and workspace preferences.</p></div></div>
+      <div class="profile-layout">
+        <section class="content-panel">
+          <div class="profile-identity"><span class="user-avatar" id="profile-avatar">E</span><div><strong id="profile-display-name">Engineering Student</strong><span id="profile-role">Student · Demo profile</span></div></div>
+          <form id="profile-form"><label class="field-label" for="profile-name-input">Display name</label><input class="profile-input" id="profile-name-input" maxlength="40" value="Engineering Student"><label class="field-label" for="profile-email-input">Email</label><input class="profile-input" id="profile-email-input" type="email" value="engineer@aura.demo" readonly><p class="profile-note">Profile details are stored in this browser only. Authentication is simulated for this demo.</p><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:17px"><button class="primary-action" type="submit">Save profile</button><button class="quiet-action" id="profile-signout" type="button">Sign out</button></div><p id="profile-feedback" role="status"></p></form>
+        </section>
+        <section class="content-panel"><div class="panel-heading"><h2>Your activity</h2></div><div class="quick-list"><div class="quick-row"><span class="quick-symbol">◇</span><span><strong id="profile-model-total">3 models</strong><span>Included starter models</span></span></div><div class="quick-row"><span class="quick-symbol">☆</span><span><strong id="profile-favorite-total">0 favorites</strong><span>Saved in this browser</span></span></div><div class="quick-row"><span class="quick-symbol">◉</span><span><strong>Demo workspace</strong><span>Session-only model activity</span></span></div></div></section>
+      </div>
+    </section>
+  </main>
+</div>
+
+<dialog id="share-model-dialog" aria-labelledby="share-model-title">
+  <div class="share-dialog-inner">
+    <div class="share-dialog-heading"><div><h2 id="share-model-title">Open this model on your phone</h2><p>Scan the QR code on a device connected to this model’s web address.</p></div><button id="share-model-close" type="button" aria-label="Close QR dialog">×</button></div>
+    <label for="share-model-url">Reachable app address</label>
+    <div class="share-url-row"><input id="share-model-url" type="url" spellcheck="false"><button id="share-model-generate" type="button">Update QR</button></div>
+    <div id="model-qr-code" aria-label="QR code for the selected model"></div>
+    <p id="share-model-status" role="status">Use your computer’s LAN address or a public HTTPS address. “localhost” and file URLs cannot be opened from another device.</p>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/models.js"></script>
+<script src="js/voice.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="js/xr.js"></script>
+<script src="js/workspace.js"></script>
+</body>
+</html>
