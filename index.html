@@ -108,6 +108,15 @@
     <button class="r-btn run" id="btn-sim">Start Engine</button>
   </div>
 
+  <div class="section" id="duke-telemetry" hidden>
+    <p class="section-title">Duke Engine Telemetry <span id="duke-engine-state">STOPPED</span></p>
+    <div class="duke-cycle-readout"><strong id="duke-cycle-stroke">Intake</strong><span id="duke-cycle-angle">0° / 720°</span></div>
+    <div class="duke-sensor-row"><span>Valves</span><strong id="duke-valve-state">Intake open</strong></div>
+    <div class="duke-sensor-row"><span>Ignition</span><strong id="duke-spark-state">Standby</strong></div>
+    <label class="duke-rpm-label" for="duke-rpm"><span>Engine speed · slow motion</span><strong><span id="duke-rpm-value">1,200</span> rpm</strong></label>
+    <input id="duke-rpm" type="range" min="600" max="3600" step="100" value="1200" aria-label="Duke engine speed in RPM">
+  </div>
+
 </div>
 
 <div id="info-float">
@@ -252,7 +261,7 @@
     </section>
 
     <section class="workspace-page viewer-page" id="view-viewer" data-page="viewer">
-      <div id="viewer-heading"><div><h1 id="viewer-model-name">Twin Turbo Inline-6</h1><p id="viewer-model-description">Interactive sample model · select any part to isolate it</p></div><div class="viewer-actions"><button id="share-model-button" type="button">▦ &nbsp; Share to phone</button><button id="ar-model-button" type="button">⌖ &nbsp; View in AR</button><button id="viewer-controls-toggle" type="button">Model controls &nbsp; ☰</button></div></div>
+      <div id="viewer-heading"><div><h1 id="viewer-model-name">Twin Turbo Inline-6</h1><p id="viewer-model-description">Interactive sample model · select any part to isolate it</p></div><div class="viewer-actions"><button id="bmw-hood-toggle" type="button" hidden>Open hood</button><button id="share-model-button" type="button">▦ &nbsp; Share to phone</button><button id="ar-model-button" type="button">⌖ &nbsp; View in AR</button><button id="viewer-controls-toggle" type="button">Model controls &nbsp; ☰</button></div></div>
       <p id="ar-session-status" role="status" hidden></p>
     </section>
 
@@ -282,6 +291,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/models.js"></script>
+<script src="js/vehicle-models.js"></script>
 <script src="js/voice.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/xr.js"></script>
