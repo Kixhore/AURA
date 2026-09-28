@@ -72,6 +72,18 @@
   .r-btn.active { background:#0fd0ff; color:#03141c; border-color:#0fd0ff; }
   .r-btn.run.active { background:#2ee672; border-color:#2ee672; color:#03141c; }
   .r-desc { font-size:10.5px; color:#9fd8ea; line-height:1.4; margin:0 0 8px 0; }
+  .section[hidden] { display:none; }
+  #duke-engine-state { color:#73888d; font-size:8px; letter-spacing:1px; }
+  #duke-engine-state.running { color:#f5a155; }
+  .duke-cycle-readout { display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:10px 11px; border:1px solid rgba(55,103,100,.65); border-radius:5px; background:rgba(10,32,34,.72); }
+  .duke-cycle-readout strong { color:#cff4e7; font:600 13px 'Space Grotesk',sans-serif; }
+  .duke-cycle-readout span { color:#80a5a3; font-size:9px; font-variant-numeric:tabular-nums; }
+  .duke-sensor-row { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 2px 0; color:#769198; font-size:9px; }
+  .duke-sensor-row strong { color:#c3d7d5; font-size:9px; font-weight:500; }
+  .duke-sensor-row strong.active { color:#70e2cf; }
+  .duke-rpm-label { display:flex; justify-content:space-between; gap:8px; margin:13px 1px 5px; color:#8ca3a6; font-size:9px; }
+  .duke-rpm-label strong { color:#cce8df; font-size:10px; font-variant-numeric:tabular-nums; }
+  #duke-rpm { width:100%; height:18px; margin:0; accent-color:#66d8bd; cursor:pointer; }
 
   #cmd-input-wrap { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border:1px solid #1c4a5c; border-radius:6px; padding:8px 10px; }
   #cmd-input-wrap input { flex:1; background:transparent; border:none; outline:none; color:#eafcff; font-size:13px; min-width:0; }
