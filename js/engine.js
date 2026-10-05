@@ -1168,7 +1168,27 @@ let arAnimationFrameId = null;
 let arSession = null;
 let arPlaced = false;
 let previousFog = scene.fog;
+let previousClearColor = new THREE.Color(0x02040a);
 let previousClearAlpha = renderer.getClearAlpha();
+
+function restoreARSession(session){
+  if (arSession !== session) return;
+  if (arHitTestSource) arHitTestSource.cancel();
+  arHitTestSource = null;
+  arAnimationFrameId = null;
+  arSession = null;
+  arPlaced = false;
+  arReticle.visible = false;
+  rig.visible = true;
+  rig.position.copy(defaultRigPosition);
+  rig.quaternion.copy(defaultRigQuaternion);
+  rig.scale.copy(defaultRigScale);
+  floorDecorations.forEach(item=>item.visible = true);
+  scene.fog = previousFog;
+  renderer.setClearColor(previousClearColor, previousClearAlpha);
+  window.dispatchEvent(new CustomEvent('aura-xr-status', { detail:{ active:false } }));
+  resizeEngineCanvas();
+}
 
 async function startAR(){
   if (!navigator.xr) throw new Error('WebXR is unavailable. Open this page in a supported mobile browser over HTTPS.');
@@ -1181,48 +1201,37 @@ async function startAR(){
     domOverlay:{ root:document.body },
   });
   arSession = session;
-  session.addEventListener('end', ()=>{
-    arHitTestSource = null;
-    arAnimationFrameId = null;
-    arSession = null;
-    arReticle.visible = false;
-    rig.visible = true;
-    rig.position.copy(defaultRigPosition);
-    rig.quaternion.copy(defaultRigQuaternion);
-    rig.scale.copy(defaultRigScale);
-    floorDecorations.forEach(item=>item.visible = true);
-    scene.fog = previousFog;
-    renderer.setClearColor(0x02040a, previousClearAlpha);
-    window.dispatchEvent(new CustomEvent('aura-xr-status', { detail:{ active:false } }));
-    resizeEngineCanvas();
-  });
+  session.addEventListener('end', ()=>restoreARSession(session), { once:true });
   arPlaced = false;
   arReticle.visible = false;
   rig.visible = false;
   rig.scale.setScalar(0.12);
   floorDecorations.forEach(item=>item.visible = false);
   previousFog = scene.fog;
+  previousClearColor.copy(renderer.getClearColor(new THREE.Color()));
   scene.fog = null;
   previousClearAlpha = renderer.getClearAlpha();
   renderer.setClearColor(0x000000, 0);
-  await renderer.xr.setSession(session);
 
   try {
+    await renderer.xr.setSession(session);
     const viewerSpace = await session.requestReferenceSpace('viewer');
     arHitTestSource = await session.requestHitTestSource({ space:viewerSpace });
     arAnimationFrameId = session.requestAnimationFrame(updateARFrame);
+    session.addEventListener('select', ()=>{
+      if (!arReticle.visible) return;
+      arReticle.matrix.decompose(rig.position, rig.quaternion, new THREE.Vector3());
+      rig.position.y += 0.24;
+      rig.visible = true;
+      arPlaced = true;
+      arReticle.visible = false;
+    });
+    window.dispatchEvent(new CustomEvent('aura-xr-status', { detail:{ active:true } }));
   } catch(error){
-    await session.end();
+    try { await session.end(); } catch(endError) {}
+    restoreARSession(session);
     throw error;
   }
-  session.addEventListener('select', ()=>{
-    if (!arReticle.visible) return;
-    arReticle.matrix.decompose(rig.position, rig.quaternion, new THREE.Vector3());
-    rig.position.y += 0.24;
-    rig.visible = true;
-    arPlaced = true;
-  });
-  window.dispatchEvent(new CustomEvent('aura-xr-status', { detail:{ active:true } }));
 }
 
 function updateARFrame(time, xrFrame){

@@ -332,12 +332,13 @@ renderDashboardModels();
 renderLibrary();
 updateWorkspaceStats();
 
-const sharedParams = new URLSearchParams(window.location.hash.slice(1));
-const sharedModelId = sharedParams.get('model');
+const sharedParams = new URLSearchParams(window.location.search);
+const legacySharedParams = new URLSearchParams(window.location.hash.slice(1));
+const sharedModelId = sharedParams.get('model') || legacySharedParams.get('model');
 if (sharedModelId && starterModels.some(model=>model.id === sharedModelId)){
   enterWorkspace(false);
   openModel(sharedModelId);
-  if (sharedParams.get('ar') === '1'){
+  if (sharedParams.get('ar') === '1' || legacySharedParams.get('ar') === '1'){
     const arStatus = document.getElementById('ar-session-status');
     arStatus.hidden = false;
     arStatus.textContent = 'Model ready. Tap Start AR placement, then point at a surface and tap to place it.';

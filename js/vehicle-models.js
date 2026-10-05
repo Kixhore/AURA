@@ -356,7 +356,7 @@
     bodyShape.quadraticCurveTo(-2.15,1.37,-2.87,0.46);
     bodyShape.lineTo(-3.23,0.48);
     bodyShape.closePath();
-    const cabinWindow = new THREE.Path();
+    const cabinWindow = new THREE.Shape();
     cabinWindow.moveTo(-1.34,1.31);
     cabinWindow.lineTo(-0.86,1.82);
     cabinWindow.quadraticCurveTo(-0.63,1.93,-0.28,1.94);
@@ -391,7 +391,7 @@
       {material:'Formed aluminum bonnet panel',fn:'Hinged hood covers the engine bay and lifts for powertrain inspection'},'cover');
 
     const glassRoot = partRoot();
-    const glassGeo = new THREE.ShapeGeometry(cabinWindow);
+    const glassGeo = new THREE.ShapeGeometry(new THREE.Shape(cabinWindow.getPoints()));
     [-0.918,0.918].forEach(z=>{
       const pane = new THREE.Mesh(glassGeo,glass);
       pane.position.z = z;
@@ -519,7 +519,7 @@
     const plenum=new THREE.Mesh(new THREE.BoxGeometry(1.35,0.22,0.65),matFor('intake'));
     plenum.position.set(1.75,1.43,0);
     intakeRoot.add(plenum);
-    registerPart('BMW M4 Intake and Charge Air','bmw-m4',intakeRoot,new THREE.Vector3(1,1,0),0x293941,
+    registerPart('BMW M4 Intake and Charge Air',intakeRoot,new THREE.Vector3(1,1,0),0x293941,
       {material:'Composite intake manifold and charge-air plumbing',fn:'Routes filtered and turbocharged air into the inline-six cylinders'},'intake');
     const engineParts=[engineBlockRoot,turboRoot,intakeRoot];
     engineParts.forEach(part=>part.visible=false);

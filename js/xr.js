@@ -4,7 +4,9 @@ const shareStatus = document.getElementById('share-model-status');
 const qrContainer = document.getElementById('model-qr-code');
 const arButton = document.getElementById('ar-model-button');
 const arStatus = document.getElementById('ar-session-status');
-const arLaunchRequested = new URLSearchParams(window.location.hash.slice(1)).get('ar') === '1';
+const queryParams = new URLSearchParams(window.location.search);
+const legacyHashParams = new URLSearchParams(window.location.hash.slice(1));
+const arLaunchRequested = queryParams.get('ar') === '1' || legacyHashParams.get('ar') === '1';
 let qrCode = null;
 
 function updateARButtonLabel(active=window.AuraEngine.isARPresenting()){
@@ -44,7 +46,9 @@ function renderModelQr(){
   }
 
   const modelId = document.getElementById('view-viewer').dataset.modelId || 'inline-six';
-  modelUrl.hash = new URLSearchParams({ model:modelId, ar:'1' }).toString();
+  modelUrl.searchParams.set('model', modelId);
+  modelUrl.searchParams.set('ar', '1');
+  modelUrl.hash = '';
   if (typeof QRCode !== 'function'){
     shareStatus.textContent = 'QR generator did not load. Check your internet connection and try again.';
     shareStatus.classList.add('error');
