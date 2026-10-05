@@ -16,8 +16,10 @@ A browser-based engineering dashboard with a Three.js engine viewer and local de
 
 Open `index.html` in a modern browser. Three.js and Space Grotesk are loaded from CDNs, so an internet connection is needed for those resources.
 
-For phone sharing, open the app from a network-reachable address and enter that address in the QR dialog. Do not use `localhost` or a `file:` URL in the QR. WebXR AR requires a supported mobile browser and a secure HTTPS origin; scanning the QR opens the selected model, then tap **View in AR** to start placement.
+For phone sharing, host the app at a public HTTPS address, then create a QR code from the Viewer. Anyone who scans it can open the selected built-in model without signing in. The phone must be able to reach the address and use a supported WebXR browser; after scanning, tap **Start AR placement**, then tap a detected surface to place the model. Local uploads are not shared.
 
 Sign-in is a local demo state. Model files selected on the Upload page are validated and queued only in the current page session; no backend or persistent model storage is configured.
 
 The Model Assistant answers from the engine's local part metadata and built-in model facts, and can run viewer commands. It does not call a hosted generative AI service; connecting one requires a backend endpoint and API credentials.
+
+The Library includes interactive engine/mechanism demos, including the 349.32 cc single-cylinder liquid-cooled DOHC Duke engine. Its selectable assembly covers the cylinder, four-valve head, camshafts, piston/crank, clutch and gearbox, intake/exhaust, radiator, coolant loop, ignition, and sump. Start the engine in the Viewer to animate the four-stroke cycle, valve timing, spark, and coolant flow; the Duke controls include adjustable RPM and live cycle telemetry.

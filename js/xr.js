@@ -4,7 +4,12 @@ const shareStatus = document.getElementById('share-model-status');
 const qrContainer = document.getElementById('model-qr-code');
 const arButton = document.getElementById('ar-model-button');
 const arStatus = document.getElementById('ar-session-status');
+const arLaunchRequested = new URLSearchParams(window.location.hash.slice(1)).get('ar') === '1';
 let qrCode = null;
+
+function updateARButtonLabel(active=window.AuraEngine.isARPresenting()){
+  arButton.innerHTML = active ? '× &nbsp; Exit AR' : arLaunchRequested ? '⌖ &nbsp; Start AR placement' : '⌖ &nbsp; View in AR';
+}
 
 function getReachableBaseUrl(){
   if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') return '';
@@ -27,19 +32,19 @@ function renderModelQr(){
     shareStatus.classList.add('error');
     return;
   }
-  if (modelUrl.protocol !== 'http:' && modelUrl.protocol !== 'https:'){
-    shareStatus.textContent = 'Use an HTTP or HTTPS web address. Local file links do not work on a phone.';
+  if (modelUrl.protocol !== 'https:'){
+    shareStatus.textContent = 'Use a public HTTPS address. AR cannot start from HTTP or a local file link.';
     shareStatus.classList.add('error');
     return;
   }
   if (modelUrl.hostname === 'localhost' || modelUrl.hostname === '127.0.0.1'){
-    shareStatus.textContent = 'Replace localhost with this computer’s network address. For WebXR, use an HTTPS address on the phone.';
+    shareStatus.textContent = 'Use a public HTTPS address that the other phone can open. Localhost is only available on this device.';
     shareStatus.classList.add('error');
     return;
   }
 
   const modelId = document.getElementById('view-viewer').dataset.modelId || 'inline-six';
-  modelUrl.hash = 'model=' + encodeURIComponent(modelId);
+  modelUrl.hash = new URLSearchParams({ model:modelId, ar:'1' }).toString();
   if (typeof QRCode !== 'function'){
     shareStatus.textContent = 'QR generator did not load. Check your internet connection and try again.';
     shareStatus.classList.add('error');
@@ -53,7 +58,7 @@ function renderModelQr(){
     colorLight:'#ffffff',
     correctLevel:QRCode.CorrectLevel.M,
   });
-  shareStatus.textContent = 'QR ready for ' + document.getElementById('viewer-model-name').textContent + '. The phone must be able to reach this address.';
+  shareStatus.textContent = 'QR ready. Anyone who scans it can open ' + document.getElementById('viewer-model-name').textContent + ' without signing in, as long as this HTTPS address is reachable.';
   shareStatus.classList.remove('error');
 }
 
@@ -64,7 +69,7 @@ function openModelShare(){
   if (baseUrl) renderModelQr();
   else {
     qrContainer.replaceChildren();
-    shareStatus.textContent = 'This page is opened as a local file. Serve it from a network-reachable web address, then enter that address here.';
+    shareStatus.textContent = 'This page is opened as a local file. Host the app at a public HTTPS address before creating an AR QR code.';
     shareStatus.classList.remove('error');
   }
 }
@@ -95,16 +100,17 @@ document.getElementById('ar-model-button').addEventListener('click', async ()=>{
     window.setTimeout(()=>{ if (!window.AuraEngine.isARPresenting()) arStatus.hidden = true; }, 6000);
   } finally {
     arButton.disabled = false;
-    arButton.innerHTML = window.AuraEngine.isARPresenting() ? '× &nbsp; Exit AR' : '⌖ &nbsp; View in AR';
+    updateARButtonLabel();
   }
 });
 window.addEventListener('aura-xr-status', event=>{
   const active = event.detail.active;
   arStatus.hidden = !active;
   arStatus.textContent = active ? 'Move your phone to find a surface, then tap to place the model.' : '';
-  arButton.innerHTML = active ? '× &nbsp; Exit AR' : '⌖ &nbsp; View in AR';
+  updateARButtonLabel(active);
 });
 
+updateARButtonLabel(false);
 if (window.location.protocol === 'file:'){
   arButton.title = 'Open this app on your phone through a secure web address to use WebXR.';
 }

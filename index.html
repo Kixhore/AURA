@@ -108,6 +108,15 @@
     <button class="r-btn run" id="btn-sim">Start Engine</button>
   </div>
 
+  <div class="section" id="duke-telemetry" hidden>
+    <p class="section-title">Duke Engine Telemetry <span id="duke-engine-state">STOPPED</span></p>
+    <div class="duke-cycle-readout"><strong id="duke-cycle-stroke">Intake</strong><span id="duke-cycle-angle">0° / 720°</span></div>
+    <div class="duke-sensor-row"><span>Valves</span><strong id="duke-valve-state">Intake open</strong></div>
+    <div class="duke-sensor-row"><span>Ignition</span><strong id="duke-spark-state">Standby</strong></div>
+    <label class="duke-rpm-label" for="duke-rpm"><span>Engine speed · slow motion</span><strong><span id="duke-rpm-value">1,200</span> rpm</strong></label>
+    <input id="duke-rpm" type="range" min="600" max="3600" step="100" value="1200" aria-label="Duke engine speed in RPM">
+  </div>
+
 </div>
 
 <div id="info-float">
@@ -252,7 +261,7 @@
     </section>
 
     <section class="workspace-page viewer-page" id="view-viewer" data-page="viewer">
-      <div id="viewer-heading"><div><h1 id="viewer-model-name">Twin Turbo Inline-6</h1><p id="viewer-model-description">Interactive sample model · select any part to isolate it</p></div><div class="viewer-actions"><button id="share-model-button" type="button">▦ &nbsp; Share to phone</button><button id="ar-model-button" type="button">⌖ &nbsp; View in AR</button><button id="viewer-controls-toggle" type="button">Model controls &nbsp; ☰</button></div></div>
+      <div id="viewer-heading"><div><h1 id="viewer-model-name">Twin Turbo Inline-6</h1><p id="viewer-model-description">Interactive sample model · select any part to isolate it</p></div><div class="viewer-actions"><button id="bmw-hood-toggle" type="button" hidden>Open hood</button><button id="share-model-button" type="button">▦ &nbsp; Share to phone</button><button id="ar-model-button" type="button">⌖ &nbsp; View in AR</button><button id="viewer-controls-toggle" type="button">Model controls &nbsp; ☰</button></div></div>
       <p id="ar-session-status" role="status" hidden></p>
     </section>
 
@@ -271,17 +280,18 @@
 
 <dialog id="share-model-dialog" aria-labelledby="share-model-title">
   <div class="share-dialog-inner">
-    <div class="share-dialog-heading"><div><h2 id="share-model-title">Open this model on your phone</h2><p>Scan the QR code on a device connected to this model’s web address.</p></div><button id="share-model-close" type="button" aria-label="Close QR dialog">×</button></div>
-    <label for="share-model-url">Reachable app address</label>
+    <div class="share-dialog-heading"><div><h2 id="share-model-title">Share this model in AR</h2><p>Anyone who scans the code can view this model on their phone without signing in.</p></div><button id="share-model-close" type="button" aria-label="Close QR dialog">×</button></div>
+    <label for="share-model-url">Public HTTPS app address</label>
     <div class="share-url-row"><input id="share-model-url" type="url" spellcheck="false"><button id="share-model-generate" type="button">Update QR</button></div>
     <div id="model-qr-code" aria-label="QR code for the selected model"></div>
-    <p id="share-model-status" role="status">Use your computer’s LAN address or a public HTTPS address. “localhost” and file URLs cannot be opened from another device.</p>
+    <p id="share-model-status" role="status">The app must be hosted at an address the other phone can reach. AR requires HTTPS; localhost and local files will not work.</p>
   </div>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/models.js"></script>
+<script src="js/vehicle-models.js"></script>
 <script src="js/voice.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="js/xr.js"></script>
